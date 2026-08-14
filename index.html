@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SURYA — Best Friend Forever</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+
+            width: 100%;
+            height: 100%;
+
+            overflow: hidden;
+
+            background: #02030b;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: white;
+        }
+
+
+        #app {
+
+            position: relative;
+
+            width: 100%;
+            height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #171746 0%,
+                    #08091e 40%,
+                    #010207 100%
+                );
+
+        }
+
+
+        canvas {
+
+            position: absolute;
+
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+        }
+
+
+        /* =========================
+           SCENES
+        ========================= */
+
+        .overlay {
+
+            position: absolute;
+
+            inset: 0;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            text-align: center;
+
+            pointer-events: none;
+        }
+
+
+        .scene {
+
+            position: absolute;
+
+            width: 90%;
+
+            max-width: 1000px;
+
+            opacity: 0;
+
+            transform: scale(.90);
+
+            transition:
+                opacity 1s ease,
+                transform 1s ease;
+        }
+
+
+        .scene.active {
+
+            opacity: 1;
+
+            transform: scale(1);
+        }
+
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+
+            font-size:
+                clamp(
+                    25px,
+                    4vw,
+                    52px
+                );
+
+            letter-spacing: 2px;
+
+            text-shadow:
+                0 0 20px #9b7cff,
+                0 0 50px #5d4aff;
+        }
+
+
+        .sub {
+
+            margin-top: 20px;
+
+            font-size:
+                clamp(
+                    14px,
+                    2vw,
+                    21px
+                );
+
+            opacity: .7;
+
+            letter-spacing: 4px;
+        }
+
+
+        /* =========================
+           COUNTDOWN
+        ========================= */
+
+        .count {
+
+            font-size:
+                clamp(
+                    100px,
+                    20vw,
+                    220px
+                );
+
+            font-weight: 900;
+
+            color: #ffd85c;
+
+            text-shadow:
+                0 0 15px #ffd85c,
+                0 0 70px #ff8a00;
+        }
+
+
+        /* =========================
+           SURYA
+        ========================= */
+
+        .name {
+
+            font-size:
+                clamp(
+                    80px,
+                    17vw,
+                    190px
+                );
+
+            font-weight: 900;
+
+            letter-spacing: 12px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ff5fa2,
+                    #ffd85c,
+                    #6de8ff,
+                    #c47cff
+                );
+
+            -webkit-background-clip: text;
+
+            background-clip: text;
+
+            color: transparent;
+
+            text-shadow:
+                0 0 40px
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .15
+                );
+        }
+
+
+        /* =========================
+           BIRTHDAY
+        ========================= */
+
+        .birthday {
+
+            font-size:
+                clamp(
+                    45px,
+                    8vw,
+                    100px
+                );
+
+            font-weight: 900;
+
+            line-height: 1.1;
+
+            text-shadow:
+                0 0 15px #ff4fa3,
+                0 0 45px #7b5cff;
+        }
+
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        .message {
+
+            font-size:
+                clamp(
+                    20px,
+                    3vw,
+                    38px
+                );
+
+            line-height: 1.7;
+
+            max-width: 850px;
+
+            margin: auto;
+
+            text-shadow:
+                0 0 20px
+                rgba(
+                    255,
+                    80,
+                    170,
+                    .5
+                );
+        }
+
+
+        .message strong {
+
+            color: #ffd85c;
+        }
+
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .surprise-button {
+
+            pointer-events: auto;
+
+            border: 1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    .7
+                );
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7b3cff,
+                    #ff3f9f
+                );
+
+            color: white;
+
+            border-radius: 999px;
+
+            padding:
+                18px 40px;
+
+            font-size:
+                clamp(
+                    17px,
+                    2.5vw,
+                    26px
+                );
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 0 20px #9a4dff,
+                0 0 60px
+                rgba(
+                    255,
+                    55,
+                    160,
+                    .5
+                );
+
+            animation:
+                buttonPulse
+                1.8s
+                infinite;
+
+            transition: .25s;
+        }
+
+
+        .surprise-button:hover {
+
+            transform:
+                scale(1.08);
+
+            box-shadow:
+                0 0 30px white,
+                0 0 90px #ff3f9f;
+        }
+
+
+        /* =========================
+           FINAL
+        ========================= */
+
+        .heart {
+
+            font-size:
+                clamp(
+                    80px,
+                    14vw,
+                    160px
+                );
+
+            filter:
+                drop-shadow(
+                    0 0 25px #ff2f78
+                );
+
+            animation:
+                heartBeat
+                1s
+                infinite;
+        }
+
+
+        .final {
+
+            margin-top: 15px;
+
+            font-size:
+                clamp(
+                    35px,
+                    7vw,
+                    85px
+                );
+
+            font-weight: 900;
+
+            line-height: 1.2;
+
+            text-shadow:
+                0 0 18px #ff4fa3,
+                0 0 60px #ff2f91;
+        }
+
+
+        .final small {
+
+            display: block;
+
+            margin-top: 25px;
+
+            font-size:
+                clamp(
+                    17px,
+                    3vw,
+                    30px
+                );
+
+            letter-spacing: 5px;
+
+            color: #ffd85c;
+        }
+
+
+        .hint {
+
+            position: absolute;
+
+            bottom: 20px;
+
+            left: 50%;
+
+            transform:
+                translateX(-50%);
+
+            opacity: .4;
+
+            font-size: 12px;
+
+            letter-spacing: 2px;
+        }
+
+
+        @keyframes buttonPulse {
+
+            50% {
+                transform: scale(1.04);
+            }
+
+        }
+
+
+        @keyframes heartBeat {
+
+            50% {
+                transform: scale(1.15);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div id="app">
+
+    <canvas id="canvas"></canvas>
+
+
+    <div class="overlay">
+
+
+        <!-- LOADING -->
+
+        <section
+            id="loading"
+            class="scene active"
+        >
+
+            <div class="loading">
+
+                Something special
+                is loading...
+
+            </div>
+
+            <div class="sub">
+
+                FOR MY BEST FRIEND SURYA
+
+            </div>
+
+        </section>
+
+
+        <!-- COUNTDOWN -->
+
+        <section
+            id="countdown"
+            class="scene"
+        >
+
+            <div
+                id="countNumber"
+                class="count"
+            >
+
+                3
+
+            </div>
+
+        </section>
+
+
+        <!-- SURYA -->
+
+        <section
+            id="surya"
+            class="scene"
+        >
+
+            <div class="name">
+
+                SURYA
+
+            </div>
+
+            <div class="sub">
+
+                MY BEST FRIEND
+
+            </div>
+
+        </section>
+
+
+        <!-- BIRTHDAY -->
+
+        <section
+            id="birthday"
+            class="scene"
+        >
+
+            <div class="birthday">
+
+                HAPPY BIRTHDAY
+
+                <br>
+
+                SURYA 🎂
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGE -->
+
+        <section
+            id="message"
+            class="scene"
+        >
+
+            <div class="message">
+
+                Friends are many...
+
+                <br>
+
+                but a
+                <strong>
+                    best friend like you
+                    is rare.
+                </strong>
+
+                <br>
+
+                Keep smiling,
+                keep rocking! ❤️
+
+                <br><br>
+
+                Happy Birthday,
+                Surya! 🎉
+
+            </div>
+
+        </section>
+
+
+        <!-- SURPRISE -->
+
+        <section
+            id="surprise"
+            class="scene"
+        >
+
+            <div class="heart">
+
+                🎁
+
+            </div>
+
+            <br><br>
+
+            <button
+                id="surpriseButton"
+                class="surprise-button"
+            >
+
+                ONE MORE SURPRISE 🎁
+
+            </button>
+
+        </section>
+
+
+        <!-- FINAL -->
+
+        <section
+            id="final"
+            class="scene"
+        >
+
+            <div class="heart">
+
+                ❤️
+
+            </div>
+
+            <div class="final">
+
+                SURYA
+
+                <br>
+
+                BEST FRIEND FOREVER
+
+                <small>
+
+                    HAPPY BIRTHDAY BRO! 🎉
+
+                </small>
+
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+    <div class="hint">
+
+        SPACE = FIREWORKS
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   CANVAS
+===================================================== */
+
+const canvas =
+    document.getElementById(
+        "canvas"
+    );
+
+const ctx =
+    canvas.getContext("2d");
+
+
+let width;
+let height;
+
+
+function resize() {
+
+    width =
+        window.innerWidth;
+
+    height =
+        window.innerHeight;
+
+    canvas.width =
+        width;
+
+    canvas.height =
+        height;
+}
+
+
+window.addEventListener(
+    "resize",
+    resize
+);
+
+resize();
+
+
+/* =====================================================
+   STARS
+===================================================== */
+
+const stars = [];
+
+
+for (
+    let i = 0;
+    i < 220;
+    i++
+) {
+
+    stars.push({
+
+        x:
+            Math.random() *
+            width,
+
+        y:
+            Math.random() *
+            height,
+
+        radius:
+            Math.random() *
+            1.8 + .3,
+
+        speed:
+            Math.random() *
+            .5 + .1,
+
+        phase:
+            Math.random() *
+            Math.PI *
+            2
+
+    });
+
+}
+
+
+/* =====================================================
+   FIREWORKS
+===================================================== */
+
+const fireworks = [];
+
+
+function firework(
+    x,
+    y,
+    amount = 130
+) {
+
+    if (x === undefined) {
+
+        x =
+            width *
+            (
+                .2 +
+                Math.random() *
+                .6
+            );
+    }
+
+
+    if (y === undefined) {
+
+        y =
+            height *
+            (
+                .15 +
+                Math.random() *
+                .4
+            );
+    }
+
+
+    const hue =
+        Math.random() *
+        360;
+
+
+    for (
+        let i = 0;
+        i < amount;
+        i++
+    ) {
+
+        const angle =
+            Math.random() *
+            Math.PI *
+            2;
+
+
+        const speed =
+            2 +
+            Math.random() *
+            6;
+
+
+        fireworks.push({
+
+            x: x,
+
+            y: y,
+
+            vx:
+                Math.cos(angle) *
+                speed,
+
+            vy:
+                Math.sin(angle) *
+                speed,
+
+            life:
+                50 +
+                Math.random() *
+                60,
+
+            hue:
+
+                hue,
+
+            size:
+
+                1 +
+                Math.random() *
+                3
+
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   HEART
+===================================================== */
+
+const hearts = [];
+
+
+function createHeart() {
+
+    for (
+        let i = 0;
+        i < 300;
+        i++
+    ) {
+
+        const t =
+            Math.random() *
+            Math.PI *
+            2;
+
+
+        const x =
+            16 *
+            Math.pow(
+                Math.sin(t),
+                3
+            );
+
+
+        const y =
+            13 *
+            Math.cos(t)
+            -
+            5 *
+            Math.cos(2 * t)
+            -
+            2 *
+            Math.cos(3 * t)
+            -
+            Math.cos(4 * t);
+
+
+        const scale =
+            5 +
+            Math.random() *
+            9;
+
+
+        hearts.push({
+
+            x:
+                width / 2,
+
+            y:
+                height / 2,
+
+            targetX:
+                width / 2 +
+                x * scale,
+
+            targetY:
+                height / 2 -
+                y * scale,
+
+            color:
+                `hsl(
+                    ${330 + Math.random() * 30},
+                    100%,
+                    ${60 + Math.random() * 30}%
+                )`
+
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+const confetti = [];
+
+
+function createConfetti() {
+
+    for (
+        let i = 0;
+        i < 180;
+        i++
+    ) {
+
+        confetti.push({
+
+            x:
+                Math.random() *
+                width,
+
+            y:
+                -Math.random() *
+                height,
+
+            speed:
+                2 +
+                Math.random() *
+                5,
+
+            rotation:
+                Math.random() *
+                Math.PI *
+                2,
+
+            color:
+                `hsl(
+                    ${Math.random() * 360},
+                    100%,
+                    65%
+                )`
+
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+function animate() {
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /* Stars */
+
+    for (
+        const star of stars
+    ) {
+
+        star.y +=
+            star.speed;
+
+
+        if (
+            star.y > height
+        ) {
+
+            star.y = 0;
+
+            star.x =
+                Math.random() *
+                width;
+
+        }
+
+
+        const alpha =
+            .4 +
+            .4 *
+            Math.sin(
+                performance.now() /
+                700 +
+                star.phase
+            );
+
+
+        ctx.fillStyle =
+            `rgba(
+                255,
+                255,
+                255,
+                ${alpha}
+            )`;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            star.x,
+            star.y,
+            star.radius,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+    }
+
+
+    /* Fireworks */
+
+    for (
+        let i =
+            fireworks.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const p =
+            fireworks[i];
+
+
+        p.x += p.vx;
+
+        p.y += p.vy;
+
+
+        p.vy += .04;
+
+        p.vx *= .99;
+
+        p.vy *= .99;
+
+        p.life--;
+
+
+        ctx.fillStyle =
+            `hsla(
+                ${p.hue},
+                100%,
+                65%,
+                ${p.life / 110}
+            )`;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+
+        if (
+            p.life <= 0
+        ) {
+
+            fireworks.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+
+    /* Heart */
+
+    for (
+        const p of hearts
+    ) {
+
+        p.x +=
+            (
+                p.targetX -
+                p.x
+            ) * .055;
+
+
+        p.y +=
+            (
+                p.targetY -
+                p.y
+            ) * .055;
+
+
+        ctx.fillStyle =
+            p.color;
+
+
+        ctx.shadowBlur =
+            15;
+
+        ctx.shadowColor =
+            p.color;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            2.5,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fill();
+
+
+        ctx.shadowBlur = 0;
+
+    }
+
+
+    /* Confetti */
+
+    for (
+        let i =
+            confetti.length - 1;
+
+        i >= 0;
+
+        i--
+    ) {
+
+        const c =
+            confetti[i];
+
+
+        c.y +=
+            c.speed;
+
+        c.rotation +=
+            .1;
+
+
+        ctx.save();
+
+        ctx.translate(
+            c.x,
+            c.y
+        );
+
+        ctx.rotate(
+            c.rotation
+        );
+
+
+        ctx.fillStyle =
+            c.color;
+
+
+        ctx.fillRect(
+            -3,
+            -6,
+            6,
+            12
+        );
+
+
+        ctx.restore();
+
+
+        if (
+            c.y >
+            height + 20
+        ) {
+
+            confetti.splice(
+                i,
+                1
+            );
+
+        }
+
+    }
+
+
+    requestAnimationFrame(
+        animate
+    );
+
+}
+
+
+animate();
+
+
+/* =====================================================
+   SCENE SYSTEM
+===================================================== */
+
+function showScene(
+    id
+) {
+
+    document
+        .querySelectorAll(
+            ".scene"
+        )
+        .forEach(
+            scene => {
+
+                scene.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    document
+        .getElementById(id)
+        .classList.add(
+            "active"
+        );
+
+}
+
+
+/* =====================================================
+   WAIT
+===================================================== */
+
+function wait(
+    time
+) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                time
+            )
+    );
+
+}
+
+
+/* =====================================================
+   BIRTHDAY EXPERIENCE
+===================================================== */
+
+async function start() {
+
+
+    /* Loading */
+
+    await wait(
+        3000
+    );
+
+
+    /* Countdown */
+
+    showScene(
+        "countdown"
+    );
+
+
+    const counter =
+        document.getElementById(
+            "countNumber"
+        );
+
+
+    for (
+        let i = 3;
+        i >= 1;
+        i--
+    ) {
+
+        counter.textContent =
+            i;
+
+
+        firework(
+            width / 2,
+            height / 2,
+            70
+        );
+
+
+        await wait(
+            1000
+        );
+
+    }
+
+
+    /* SURYA */
+
+    showScene(
+        "surya"
+    );
+
+
+    createHeart();
+
+
+    for (
+        let i = 0;
+        i < 10;
+        i++
+    ) {
+
+        firework();
+
+        await wait(
+            250
+        );
+
+    }
+
+
+    await wait(
+        3500
+    );
+
+
+    /* Birthday */
+
+    showScene(
+        "birthday"
+    );
+
+
+    createConfetti();
+
+
+    for (
+        let i = 0;
+        i < 12;
+        i++
+    ) {
+
+        firework();
+
+        await wait(
+            250
+        );
+
+    }
+
+
+    await wait(
+        3500
+    );
+
+
+    /* Message */
+
+    showScene(
+        "message"
+    );
+
+
+    await wait(
+        4500
+    );
+
+
+    /* Surprise */
+
+    showScene(
+        "surprise"
+    );
+
+}
+
+
+/* =====================================================
+   FINAL SURPRISE
+===================================================== */
+
+document
+    .getElementById(
+        "surpriseButton"
+    )
+    .addEventListener(
+        "click",
+        async function () {
+
+
+            showScene(
+                "final"
+            );
+
+
+            createConfetti();
+
+
+            for (
+                let i = 0;
+                i < 25;
+                i++
+            ) {
+
+                firework();
+
+                await wait(
+                    160
+                );
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   SPACE FIREWORK
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.code ===
+            "Space"
+        ) {
+
+            event.preventDefault();
+
+
+            firework(
+                width / 2,
+                height * .35,
+                160
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+start();
+
+</script>
+
+</body>
+
+</html>
